@@ -1,59 +1,49 @@
-package main.java;
+package test.java;
 
+import main.java.UC2ClientRiskSort;
+import org.junit.jupiter.api.Test;
 import java.util.*;
 
-public class UC2ClientRiskSort {
+import static org.junit.jupiter.api.Assertions.*;
 
-    public static class Client {
-        String name;
-        int riskScore;
-        double accountBalance;
+class UC2ClientRiskSortTest {
 
-        public Client(String name, int riskScore, double accountBalance) {
-            this.name = name;
-            this.riskScore = riskScore;
-            this.accountBalance = accountBalance;
-        }
-
-        @Override
-        public String toString() {
-            return name + ":" + riskScore;
-        }
+    @Test
+    void testBubbleSortRisk() {
+        List<UC2ClientRiskSort.Client> clients = Arrays.asList(
+                new UC2ClientRiskSort.Client("C", 80, 1000),
+                new UC2ClientRiskSort.Client("A", 20, 2000),
+                new UC2ClientRiskSort.Client("B", 50, 1500)
+        );
+        UC2ClientRiskSort.bubbleSortRisk(clients);
+        assertEquals("A", clients.get(0).name);
+        assertEquals("B", clients.get(1).name);
+        assertEquals("C", clients.get(2).name);
     }
 
-    // Bubble sort ascending by riskScore
-    public static void bubbleSortRisk(List<Client> clients) {
-        int n = clients.size();
-        for (int i = 0; i < n - 1; i++) {
-            boolean swapped = false;
-            for (int j = 0; j < n - i - 1; j++) {
-                if (clients.get(j).riskScore > clients.get(j + 1).riskScore) {
-                    Collections.swap(clients, j, j + 1);
-                    swapped = true;
-                }
-            }
-            if (!swapped) break;
-        }
+    @Test
+    void testInsertionSortRiskDesc() {
+        List<UC2ClientRiskSort.Client> clients = Arrays.asList(
+                new UC2ClientRiskSort.Client("C", 80, 1000),
+                new UC2ClientRiskSort.Client("A", 20, 2000),
+                new UC2ClientRiskSort.Client("B", 50, 1500)
+        );
+        UC2ClientRiskSort.insertionSortRiskDesc(clients);
+        assertEquals("C", clients.get(0).name);
+        assertEquals("B", clients.get(1).name);
+        assertEquals("A", clients.get(2).name);
     }
 
-    // Insertion sort descending by riskScore, ascending accountBalance
-    public static void insertionSortRiskDesc(List<Client> clients) {
-        for (int i = 1; i < clients.size(); i++) {
-            Client key = clients.get(i);
-            int j = i - 1;
-            while (j >= 0 && (clients.get(j).riskScore < key.riskScore ||
-                    (clients.get(j).riskScore == key.riskScore && clients.get(j).accountBalance > key.accountBalance))) {
-                clients.set(j + 1, clients.get(j));
-                j--;
-            }
-            clients.set(j + 1, key);
-        }
-    }
-
-    // Top N risk clients
-    public static List<Client> topRisks(List<Client> clients, int n) {
-        List<Client> copy = new ArrayList<>(clients);
-        insertionSortRiskDesc(copy);
-        return copy.subList(0, Math.min(n, copy.size()));
+    @Test
+    void testTopRisks() {
+        List<UC2ClientRiskSort.Client> clients = Arrays.asList(
+                new UC2ClientRiskSort.Client("C", 80, 1000),
+                new UC2ClientRiskSort.Client("A", 20, 2000),
+                new UC2ClientRiskSort.Client("B", 50, 1500)
+        );
+        List<UC2ClientRiskSort.Client> top2 = UC2ClientRiskSort.topRisks(clients, 2);
+        assertEquals(2, top2.size());
+        assertEquals("C", top2.get(0).name);
+        assertEquals("B", top2.get(1).name);
     }
 }
